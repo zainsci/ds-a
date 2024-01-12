@@ -41,10 +41,36 @@ class Base64:
         return base64_str
 
     def decode(self, encoded_str=""):
+        # Check if there's an encoded str in Object
         if encoded_str == "" or encoded_str == None:
             encoded_str = self.encoded_str
 
-        return encoded_str
+        # Convert encoded str to single chars
+        chars = list(encoded_str)
+        decimals = []
+
+        # Chars to Decimals
+        for char in chars:
+            if char == "=":
+                continue
+            else:
+                decimals.append(BASE64.index(char))
+
+        # Decimals to 6-bit
+        six_bits = [format(x, "06b") for x in decimals]
+        six_bit_str = "".join(six_bits)
+
+        # 6-bit string to 8-bits
+        eight_bits = []
+        for i in range(0, len(six_bit_str), 8):
+            eight_bits.append(six_bit_str[i:i+8])
+        eight_bits = eight_bits[:-1]
+
+        # 8-bit to ASCII chars and then join
+        ascii_chars = [chr(int(x, 2)) for x in eight_bits]
+        decoded_str = "".join(ascii_chars)
+
+        return decoded_str
 
 
 def main():
@@ -53,12 +79,18 @@ def main():
     # Tests
     print(base64.encode("Hello!!"))
     print("SGVsbG8hIQ==")
+    print(base64.decode())
+    print("Hello!!")
 
     print(base64.encode("Zain"))
     print("WmFpbg==")
+    print(base64.decode())
+    print("Zain")
 
     print(base64.encode("We Are Lions!"))
     print("V2UgQXJlIExpb25zIQ==")
+    print(base64.decode())
+    print("We Are Lions!")
 
 
 if __name__ == "__main__":
